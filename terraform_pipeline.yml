@@ -35,6 +35,8 @@ stages:
     jobs:
       - job: apply
         steps:
+        - checkout: self
+          persistCredentials: true
         - task: TerraformInstaller@1
           displayName: install1
           inputs:
