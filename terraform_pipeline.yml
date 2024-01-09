@@ -51,11 +51,13 @@ stages:
             backendAzureRmContainerName: 'vscontainer'
             backendAzureRmKey: 'terraform.tfstate'
         - task: TerraformTaskV4@4
+          displayName: plan
           inputs:
             provider: 'azurerm'
             command: 'plan'
             environmentServiceNameAzureRM: 'vagish_subs(6b64caaa-ba7d-4fe5-b996-e66a5967b649)'
         - task: TerraformTaskV4@4
+          displayName: apply
           inputs:
             provider: 'azurerm'
             command: 'apply'
