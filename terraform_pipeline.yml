@@ -68,6 +68,16 @@ stages:
         dependsOn: apply
         steps:
         - task: TerraformTaskV4@4
+          displayName: init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            backendServiceArm: 'vagish_subs(6b64caaa-ba7d-4fe5-b996-e66a5967b649)'
+            backendAzureRmResourceGroupName: 'demo_resource'
+            backendAzureRmStorageAccountName: 'newvs'
+            backendAzureRmContainerName: 'vscontainer'
+            backendAzureRmKey: 'terraform.tfstate'
+        - task: TerraformTaskV4@4
           displayName: destroy
           inputs:
             provider: 'azurerm'
