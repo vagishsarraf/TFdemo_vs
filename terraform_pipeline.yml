@@ -65,8 +65,22 @@ stages:
     condition: failed('tfdeploy')
     dependsOn: tfdeploy
     jobs:
-      - job: apply
+      - job: destroy
         steps:
+        - task: TerraformInstaller@1
+          displayName: install3
+          inputs:
+            terraformVersion: 'latest'
+        - task: TerraformTaskV4@4
+          displayName: init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            backendServiceArm: 'vagish_subs(1)(6b64caaa-ba7d-4fe5-b996-e66a5967b649)'
+            backendAzureRmResourceGroupName: 'demo_resource'
+            backendAzureRmStorageAccountName: 'newvs'
+            backendAzureRmContainerName: 'vscontainer'
+            backendAzureRmKey: 'terraform.tfstate'
         - task: TerraformTaskV4@4
           displayName: destroy
           inputs:
