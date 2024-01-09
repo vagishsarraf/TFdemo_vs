@@ -61,3 +61,15 @@ stages:
             provider: 'azurerm'
             command: 'apply'
             environmentServiceNameAzureRM: 'vagish_subs(6b64caaa-ba7d-4fe5-b996-e66a5967b649)'
+  - stage: tfdestroy
+    condition: failed('tfdeploy')
+    dependsOn: tfdeploy
+    jobs:
+      - job: apply
+        steps:
+        - task: TerraformTaskV4@4
+          displayName: destroy
+          inputs:
+            provider: 'azurerm'
+            command: 'destroy'
+            environmentServiceNameAzureRM: 'vagish_subs(6b64caaa-ba7d-4fe5-b996-e66a5967b649)'
