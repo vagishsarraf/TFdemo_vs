@@ -1,0 +1,52 @@
+
+trigger:
+- none
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: tfvalidate
+    jobs:
+      - job: validate
+        continueOnError: false
+        steps:
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
+        - task: TerraformTaskV4@4
+          displayName: init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            backendServiceArm: 'vagish_subs(1)(6b64caaa-ba7d-4fe5-b996-e66a5967b649)'
+            backendAzureRmResourceGroupName: 'demo_resource'
+            backendAzureRmStorageAccountName: 'newvs'
+            backendAzureRmContainerName: 'vscontainer'
+            backendAzureRmKey: 'terraform.tfstate'
+        - task: TerraformTaskV4@4
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+        
+        - task: TerraformTaskV4@4
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            environmentServiceNameAzureRM: 'vagish_subs(6b64caaa-ba7d-4fe5-b996-e66a5967b649)'
+  - stage: tfdeploy
+    condition: succeeded('tfvalidate')
+    dependsOn: tfvalidate
+    jobs:
+      - job: apply
+        steps:
+        - task: TerraformTaskV4@4
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            environmentServiceNameAzureRM: 'vagish_subs(6b64caaa-ba7d-4fe5-b996-e66a5967b649)'
+        - task: TerraformTaskV4@4
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            environmentServiceNameAzureRM: 'vagish_subs(6b64caaa-ba7d-4fe5-b996-e66a5967b649)'
